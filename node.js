@@ -2,7 +2,6 @@
 
 const assert = require('assert')
 const http = require('http')
-const SemVerStore = require('semver-store')
 const Handlers = buildHandlers()
 
 const types = {
@@ -24,7 +23,7 @@ function Node (prefix, children, kind, handlers, regex, versions) {
   this.regex = regex || null
   this.wildcardChild = null
   this.parametricBrother = null
-  this.versions = versions || SemVerStore()
+  this.versions = versions
 }
 
 Object.defineProperty(Node.prototype, 'types', {
@@ -97,7 +96,7 @@ Node.prototype.addChild = function (node) {
   return this
 }
 
-Node.prototype.reset = function (prefix) {
+Node.prototype.reset = function (prefix, versions) {
   this.prefix = prefix
   this.children = {}
   this.kind = this.types.STATIC
@@ -105,7 +104,7 @@ Node.prototype.reset = function (prefix) {
   this.numberOfChildren = 0
   this.regex = null
   this.wildcardChild = null
-  this.versions = SemVerStore()
+  this.versions = versions
   return this
 }
 
