@@ -94,7 +94,7 @@ Router.prototype._on = function _on (method, path, opts, handler, store) {
     store: store
   })
 
-  const version = opts.version
+  const versions = opts.version ? [opts.version] : opts.versions || [undefined]
 
   for (var i = 0, len = path.length; i < len; i++) {
     // search for parametric or wildcard routes
@@ -109,7 +109,9 @@ Router.prototype._on = function _on (method, path, opts, handler, store) {
       }
 
       // add the static part of the route to the tree
-      this._insert(method, staticPart, 0, null, null, null, null, version)
+      for (let vn = 0; vn < versions.length; vn++) {
+        this._insert(method, staticPart, 0, null, null, null, null, versions[vn])
+      }
 
       // isolate the parameter name
       var isRegex = false
@@ -151,18 +153,28 @@ Router.prototype._on = function _on (method, path, opts, handler, store) {
         if (this.caseSensitive === false) {
           completedPath = completedPath.toLowerCase()
         }
-        return this._insert(method, completedPath, nodeType, params, handler, store, regex, version)
+
+        for (let vn = 0; vn < versions.length; vn++) {
+          this._insert(method, completedPath, nodeType, params, handler, store, regex, versions[vn])
+        }
+        return
       }
       // add the parameter and continue with the search
-      this._insert(method, path.slice(0, i), nodeType, params, null, null, regex, version)
+      for (let vn = 0; vn < versions.length; vn++) {
+        this._insert(method, path.slice(0, i), nodeType, params, null, null, regex, versions[vn])
+      }
 
       i--
     // wildcard route
     } else if (path.charCodeAt(i) === 42) {
-      this._insert(method, path.slice(0, i), 0, null, null, null, null, version)
+      for (let vn = 0; vn < versions.length; vn++) {
+        this._insert(method, path.slice(0, i), 0, null, null, null, null, versions[vn])
+      }
       // add the wildcard parameter
       params.push('*')
-      return this._insert(method, path.slice(0, len), 2, params, handler, store, null, version)
+      for (let vn = 0; vn < versions.length; vn++) {
+        return this._insert(method, path.slice(0, len), 2, params, handler, store, null, versions[vn])
+      }
     }
   }
 
@@ -171,7 +183,9 @@ Router.prototype._on = function _on (method, path, opts, handler, store) {
   }
 
   // static route
-  this._insert(method, path, 0, params, handler, store, null, version)
+  for (let vn = 0; vn < versions.length; vn++) {
+    this._insert(method, path, 0, params, handler, store, null, versions[vn])
+  }
 }
 
 Router.prototype._insert = function _insert (method, path, kind, params, handler, store, regex, version) {

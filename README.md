@@ -136,7 +136,8 @@ router.on('GET', '/example', (req, res, params, store) => {
 
 ##### Versioned routes
 
-If needed you can provide a `version` option, which will allow you to declare multiple versions of the same route.
+If needed you can provide a `version` option, which will allow you to declare multiple versions of the same route. You can also provide `versions` option, which is an array of versions.
+`version` option property has priority over the `versions` option property.
 
 ###### default
 <a name="semver"></a>

@@ -240,3 +240,22 @@ test('It should throw if you declare multiple times the same route', t => {
     t.is(err.message, 'Method \'GET\' already declared for route \'/\' version \'1.2.3\'')
   }
 })
+
+test('Route declaration supports version and versions option', t => {
+  t.plan(8)
+
+  const findMyWay = FindMyWay()
+
+  findMyWay.on('GET', '/', { version: '1.2.3' }, noop)
+  findMyWay.on('GET', '/', { versions: ['3.2.0', '3.2.1'] }, noop)
+  findMyWay.on('GET', '/', { version: '4.0.0', versions: ['4.1.1', '4.1.2'] }, noop)
+
+  t.ok(findMyWay.find('GET', '/', '1.2.3'))
+  t.ok(findMyWay.find('GET', '/', '3.2.0'))
+  t.ok(findMyWay.find('GET', '/', '3.2.1'))
+  t.ok(findMyWay.find('GET', '/', '4.0.0'))
+  t.notOk(findMyWay.find('GET', '/', '2.x'))
+  t.notOk(findMyWay.find('GET', '/', '3.2.2'))
+  t.notOk(findMyWay.find('GET', '/', '4.1.1'))
+  t.notOk(findMyWay.find('GET', '/', '4.1.2'))
+})

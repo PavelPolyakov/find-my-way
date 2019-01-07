@@ -22,16 +22,19 @@ const customVersioning = {
 }
 
 test('A route could support multiple versions (find) / 1', t => {
-  t.plan(5)
+  t.plan(7)
 
   const findMyWay = FindMyWay({ versioning: customVersioning })
 
   findMyWay.on('GET', '/', { version: 'application/vnd.example.api+json;version=2' }, noop)
   findMyWay.on('GET', '/', { version: 'application/vnd.example.api+json;version=3' }, noop)
+  findMyWay.on('GET', '/', { versions: ['application/vnd.example.api+json;version=4', 'application/vnd.example.api+json;version=5'] }, noop)
 
   t.ok(findMyWay.find('GET', '/', 'application/vnd.example.api+json;version=2'))
   t.ok(findMyWay.find('GET', '/', 'application/vnd.example.api+json;version=3'))
-  t.notOk(findMyWay.find('GET', '/', 'application/vnd.example.api+json;version=4'))
-  t.notOk(findMyWay.find('GET', '/', 'application/vnd.example.api+json;version=5'))
+  t.ok(findMyWay.find('GET', '/', 'application/vnd.example.api+json;version=4'))
+  t.ok(findMyWay.find('GET', '/', 'application/vnd.example.api+json;version=5'))
   t.notOk(findMyWay.find('GET', '/', 'application/vnd.example.api+json;version=6'))
+  t.notOk(findMyWay.find('GET', '/', 'application/vnd.example.api+json;version=7'))
+  t.notOk(findMyWay.find('GET', '/', 'application/vnd.example.api+json;version=8'))
 })
